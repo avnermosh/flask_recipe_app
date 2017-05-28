@@ -13,6 +13,8 @@ class AddRecipeForm(Form):
     recipe_title = StringField('Recipe Title', validators=[DataRequired()])
     recipe_description = StringField('Recipe Description', validators=[DataRequired()])
     recipe_public = BooleanField('Public Recipe', default="")
+    recipe_dairy_free = BooleanField('Dairy-Free Recipe', default="")
+    recipe_soy_free = BooleanField('Soy-Free Recipe', default="")
     recipe_type = RadioField('Recipe Type', validators=[DataRequired()],
                              choices=[('Breakfast', 'Breakfast Recipe'),
                                       ('Lunch', 'Lunch Recipe'),
@@ -42,6 +44,8 @@ class EditRecipeForm(Form):
     recipe_title = StringField('Recipe Title', validators=[])
     recipe_description = StringField('Recipe Description', validators=[])
     recipe_public = BooleanField('Public Recipe', default="")
+    recipe_dairy_free = BooleanField('Dairy-Free Recipe', default="")
+    recipe_soy_free = BooleanField('Soy-Free Recipe', default="")
     recipe_type = RadioField('Recipe Type', validators=[],
                              choices=[('Breakfast', 'Breakfast Recipe'),
                                       ('Lunch', 'Lunch Recipe'),

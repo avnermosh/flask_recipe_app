@@ -3,7 +3,14 @@
 
 <div class="user-profile">
   <div class="page-header">
-    <h2>{{ recipe.Recipe.recipe_title }}</h2>
+    <h2>{{ recipe.Recipe.recipe_title }}
+      {% if recipe.Recipe.dairy_free_recipe %}
+        <span class="label label-info" style="font-size:12px;">Dairy-Free</span>
+      {% endif %}
+      {% if recipe.Recipe.soy_free_recipe %}
+        <span class="label label-success" style="font-size:12px;">Soy-Free</span>
+      {% endif %}
+    </h2>
     <h5>
       <a href="{{ url_for('recipes.edit_recipe', recipe_id=recipe.Recipe.id) }}">Edit</a>
       |
@@ -17,11 +24,13 @@
       <div class="panel panel-primary">
         <div class="panel-heading">Recipe Details</div>
         <div class="panel-body"><b>Description:</b> {{ recipe.Recipe.recipe_description }}</div>
-        {% if recipe.Recipe.is_public %}
-          <div class="panel-body"><b>Public or Private:</b> Public</div>
-        {% else %}
-          <div class="panel-body"><b>Public or Private:</b> Private</div>
-        {% endif %}
+        <div class="panel-body"><b>Public or Private:</b>
+          {% if recipe.Recipe.is_public %}
+            Public
+          {% else %}
+            Private
+          {% endif %}
+        </div>
         <div class="panel-body"><b>Recipe Type:</b> {{ recipe.Recipe.recipe_type }}</div>
         <div class="panel-body"><b>Rating (1-worst to 10-best):</b> {{ recipe.Recipe.rating }}</div>
         <div class="panel-body"><b>Inspiration:</b> {{ recipe.Recipe.inspiration }}</div>

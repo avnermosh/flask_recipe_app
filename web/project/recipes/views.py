@@ -83,7 +83,9 @@ def add_recipe():
                                 form.recipe_rating.data,#  or None,
                                 form.recipe_ingredients.data,
                                 form.recipe_steps.data,
-                                form.recipe_inspiration.data)
+                                form.recipe_inspiration.data,
+                                form.recipe_dairy_free.data,
+                                form.recipe_soy_free.data)
             db.session.add(new_recipe)
             db.session.commit()
             flash('New recipe, {}, added!'.format(new_recipe.recipe_title), 'success')

@@ -134,7 +134,57 @@
               {% else %}
                 <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-4" value="5">
               {% endif %}
-              5 (Best)
+              5
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if recipe.rating == 5 %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-5" value="6" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-5" value="6">
+              {% endif %}
+              6
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if recipe.rating == 5 %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-6" value="7" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-6" value="7">
+              {% endif %}
+              7
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if recipe.rating == 5 %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-7" value="8" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-7" value="8">
+              {% endif %}
+              8
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if recipe.rating == 5 %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-8" value="9" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-8" value="9">
+              {% endif %}
+              9
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if recipe.rating == 5 %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-9" value="10" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="recipe_rating" id="recipe_rating-9" value="10">
+              {% endif %}
+              10 (Best)
             </label>
           </div>
           {{ render_errors(form.recipe_rating) }}
