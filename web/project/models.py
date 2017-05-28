@@ -22,7 +22,6 @@ class ValidationError(ValueError):
 
 class Recipe(db.Model):
     """Recipe fields to add:
-        date created
         date last modified
     """
     __tablename__ = "recipes"
@@ -42,11 +41,12 @@ class Recipe(db.Model):
     inspiration = db.Column(db.String, default=None, nullable=True)
     dairy_free_recipe = db.Column(db.Boolean, nullable=True)
     soy_free_recipe = db.Column(db.Boolean, nullable=True)
+    date_created = db.Column(db.DateTime, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __init__(self, title=None, description=None, user_id=None, is_public=False, image_filename=None, image_url=None,
                  recipe_type=None, rating=None, ingredients=None, recipe_steps=None, inspiration=None,
-                 dairy_free_recipe=False, soy_free_recipe=False):
+                 dairy_free_recipe=False, soy_free_recipe=False, date_created=None):
         self.recipe_title = title
         self.recipe_description = description
         self.is_public = is_public
@@ -59,6 +59,7 @@ class Recipe(db.Model):
         self.inspiration = inspiration
         self.dairy_free_recipe = dairy_free_recipe
         self.soy_free_recipe = soy_free_recipe
+        self.date_created = date_created
         self.user_id = user_id
 
     def __repr__(self):
