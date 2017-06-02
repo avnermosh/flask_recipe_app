@@ -158,6 +158,16 @@ def edit_recipe(recipe_id):
                 update_counter += 1
                 recipe.is_public = form.recipe_public.data
 
+            if form.recipe_dairy_free.data != recipe.dairy_free_recipe:
+                flash('DEBUG: Updating recipe.dairy_free_recipe to {}.'.format(form.recipe_dairy_free.data), 'debug')
+                update_counter += 1
+                recipe.dairy_free_recipe = form.recipe_dairy_free.data
+
+            if form.recipe_soy_free.data != recipe.soy_free_recipe:
+                flash('DEBUG: Updating recipe.soy_free_recipe to {}.'.format(form.recipe_soy_free.data), 'debug')
+                update_counter += 1
+                recipe.soy_free_recipe = form.recipe_soy_free.data
+
             if form.recipe_type.data != recipe.recipe_type:
                 flash('DEBUG: Updating recipe.recipe_type to {}.'.format(form.recipe_type.data), 'debug')
                 update_counter += 1

@@ -209,6 +209,40 @@
     </div>
 
     <div class="form-group row">
+      <legend for="recipe_dairy_free" class="col-form-legend col-sm-2">Dairy-Free Recipe?</legend>
+      <div class="col-sm-6">
+        <div class="form-check">
+          <label class="form-check-label">
+            {% if recipe.dairy_free_recipe == true %}
+              <input class="form-check-input" name="recipe_dairy_free" id="recipe_dairy_free" type="checkbox" checked>
+            {% else %}
+              <input class="form-check-input" name="recipe_dairy_free" id="recipe_dairy_free" type="checkbox">
+            {% endif %}
+            Yes
+          </label>
+          {{ render_errors(form.recipe_dairy_free) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <legend for="recipe_soy_free" class="col-form-legend col-sm-2">Soy-Free Recipe?</legend>
+      <div class="col-sm-6">
+        <div class="form-check">
+          <label class="form-check-label">
+            {% if recipe.is_public == true %}
+              <input class="form-check-input" name="recipe_soy_free" id="recipe_soy_free" type="checkbox" checked>
+            {% else %}
+              <input class="form-check-input" name="recipe_soy_free" id="recipe_soy_free" type="checkbox">
+            {% endif %}
+            Yes
+          </label>
+          {{ render_errors(form.recipe_soy_free) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
       <legend for="recipe_image" class="col-form-legend col-sm-2">Recipe Image</legend>
       <div class="col-sm-6">
         <label class="form-check-label">Current filename: {{ recipe.image_filename }}</label>
