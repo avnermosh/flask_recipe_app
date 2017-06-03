@@ -50,7 +50,7 @@ def public_recipes():
 @recipes_blueprint.route('/recipes/<recipe_type>')
 @login_required
 def user_recipes(recipe_type='All'):
-    if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side_Dish']:
+    if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side Dish', 'Drink']:
         my_recipes = Recipe.query.filter_by(user_id=current_user.id, recipe_type=recipe_type)
         return render_template('user_recipes.html', user_recipes=my_recipes, recipe_type=recipe_type)
     elif recipe_type == 'All':

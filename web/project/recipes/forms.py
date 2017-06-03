@@ -20,7 +20,8 @@ class AddRecipeForm(Form):
                                       ('Lunch', 'Lunch Recipe'),
                                       ('Dinner', 'Dinner Recipe'),
                                       ('Dessert', 'Dessert Recipe'),
-                                      ('Side Dish', 'Side Dish Recipe')],
+                                      ('Side Dish', 'Side Dish Recipe'),
+                                      ('Drink', 'Drink Recipe')],
                              default='Dinner')
     recipe_rating = RadioField('Recipe Rating', validators=[DataRequired()],
                                choices=[('1', 'Rating 1'),
@@ -51,7 +52,8 @@ class EditRecipeForm(Form):
                                       ('Lunch', 'Lunch Recipe'),
                                       ('Dinner', 'Dinner Recipe'),
                                       ('Dessert', 'Dessert Recipe'),
-                                      ('Side Dish', 'Side Dish Recipe')],
+                                      ('Side Dish', 'Side Dish Recipe'),
+                                      ('Drink', 'Drink Recipe')],
                              default='Dinner')
     recipe_rating = RadioField('Recipe Rating', validators=[DataRequired()],
                                choices=[('1', 'Rating 1'),

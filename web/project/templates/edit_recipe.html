@@ -73,11 +73,21 @@
           <div class="form-check">
             <label class="form-check-label">
               {% if recipe.recipe_type == "Side Dish" %}
-                <input type="radio" class="form-check-input" name="recipe_type" id="recipe_type-4" value="Side_Dish" checked>
+                <input type="radio" class="form-check-input" name="recipe_type" id="recipe_type-4" value="Side Dish" checked>
               {% else %}
-                <input type="radio" class="form-check-input" name="recipe_type" id="recipe_type-4" value="Side_Dish">
+                <input type="radio" class="form-check-input" name="recipe_type" id="recipe_type-4" value="Side Dish">
               {% endif %}
               Side Dish
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if recipe.recipe_type == "Drink" %}
+                <input type="radio" class="form-check-input" name="recipe_type" id="recipe_type-5" value="Drink" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="recipe_type" id="recipe_type-5" value="Drink">
+              {% endif %}
+              Drink
             </label>
           </div>
           {{ render_errors(form.recipe_type) }}
