@@ -108,7 +108,7 @@ def register():
                 db.session.commit()
                 login_user(new_user)
                 send_confirmation_email(new_user.email)
-                if 'ACCOUNT_SID'  in app.config:
+                if 'ACCOUNT_SID' in app.config and not app.config['TESTING']:
                     send_new_user_text_message(new_user.email)
                 flash('Thanks for registering!  Please check your email to confirm your email address.', 'success')
                 return redirect(url_for('recipes.user_recipes', recipe_type='All'))
