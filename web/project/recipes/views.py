@@ -48,13 +48,18 @@ def public_recipes():
 
 
 @recipes_blueprint.route('/recipes/<recipe_type>')
-@login_required
 def user_recipes(recipe_type='All'):
     if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side Dish', 'Drink']:
-        my_recipes = Recipe.query.filter_by(user_id=current_user.id, recipe_type=recipe_type)
+        if current_user.is_authenticated:
+            my_recipes = Recipe.query.filter(((Recipe.user_id == current_user.id) & (Recipe.recipe_type == recipe_type)) | ((Recipe.is_public == True) & (Recipe.recipe_type == recipe_type)))
+        else:
+            my_recipes = Recipe.query.filter((Recipe.is_public == True) & (Recipe.recipe_type == recipe_type))
         return render_template('user_recipes.html', user_recipes=my_recipes, recipe_type=recipe_type)
     elif recipe_type == 'All':
-        my_recipes = Recipe.query.filter_by(user_id=current_user.id)
+        if current_user.is_authenticated:
+            my_recipes = Recipe.query.filter((Recipe.user_id == current_user.id) | (Recipe.is_public == True))
+        else:
+            my_recipes = Recipe.query.filter(Recipe.is_public == True)
         return render_template('user_recipes.html', user_recipes=my_recipes, recipe_type=recipe_type)
     else:
         flash('ERROR! Invalid recipe type selected.', 'error')
@@ -99,35 +104,33 @@ def add_recipe():
 
 @recipes_blueprint.route('/recipe/<recipe_id>')
 def recipe_details(recipe_id):
-    recipe_with_user = db.session.query(Recipe, User).join(User).filter(Recipe.id == recipe_id).first()
-    if recipe_with_user is not None:
-        if recipe_with_user.Recipe.is_public:
-            return render_template('recipe_detail.html', recipe=recipe_with_user)
-        else:
-            if current_user.is_authenticated and recipe_with_user.Recipe.user_id == current_user.id:
-                return render_template('recipe_detail.html', recipe=recipe_with_user)
-            else:
-                flash('Error! Incorrect permissions to access this recipe.', 'error')
+    # recipe_with_user = db.session.query(Recipe, User).join(User).filter(Recipe.id == recipe_id).first_or_404()
+    recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
+
+    if recipe.is_public:
+        return render_template('recipe_detail.html', recipe=recipe)
     else:
-        flash('Error! Recipe does not exist.', 'error')
+        if current_user.is_authenticated and recipe.user_id == current_user.id:
+            return render_template('recipe_detail.html', recipe=recipe)
+        else:
+            flash('Error! Incorrect permissions to access this recipe.', 'error')
+
     return redirect(url_for('recipes.public_recipes'))
 
 
 @recipes_blueprint.route('/delete/<recipe_id>')
 @login_required
 def delete_recipe(recipe_id):
-    recipe = Recipe.query.filter_by(id=recipe_id).first()
-    if recipe is not None:
-        if recipe.user_id == current_user.id:
-            db.session.delete(recipe)
-            db.session.commit()
-            flash('{} was deleted.'.format(recipe.recipe_title), 'success')
-            return redirect(url_for('recipes.user_recipes', recipe_type='All'))
-        else:
-            flash('Error! Incorrect permissions to delete this recipe.', 'error')
-    else:
-        flash('Error! Recipe does not exist.', 'error')
-    return redirect(url_for('recipes.public_recipes'))
+    recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
+
+    if not recipe.user_id == current_user.id:
+        flash('Error! Incorrect permissions to delete this recipe.', 'error')
+        return redirect(url_for('recipes.public_recipes'))
+
+    db.session.delete(recipe)
+    db.session.commit()
+    flash('{} was deleted.'.format(recipe.recipe_title), 'success')
+    return redirect(url_for('recipes.user_recipes', recipe_type='All'))
 
 
 @recipes_blueprint.route('/edit/<recipe_id>', methods=['GET', 'POST'])
@@ -137,7 +140,11 @@ def edit_recipe(recipe_id):
     # sent to the form.  This will cause AddRecipeForm to not see the file data.
     # Flask-WTF handles passing form data to the form, so not parameters need to be included.
     form = EditRecipeForm()
-    recipe = Recipe.query.filter_by(id=recipe_id).first()
+    recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
+
+    if not recipe.user_id == current_user.id:
+        flash('Error! Incorrect permissions to edit this recipe.', 'error')
+        return redirect(url_for('recipes.public_recipes'))
 
     if request.method == 'POST':
         if form.validate_on_submit():

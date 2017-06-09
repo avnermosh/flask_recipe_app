@@ -3,18 +3,20 @@
 
 <div class="user-profile">
   <div class="page-header">
-    <h2>{{ recipe.Recipe.recipe_title }}
-      {% if recipe.Recipe.dairy_free_recipe %}
+    <h2>{{ recipe.recipe_title }}
+      {% if recipe.dairy_free_recipe %}
         <span class="label label-info" style="font-size:12px;">Dairy-Free</span>
       {% endif %}
-      {% if recipe.Recipe.soy_free_recipe %}
+      {% if recipe.soy_free_recipe %}
         <span class="label label-success" style="font-size:12px;">Soy-Free</span>
       {% endif %}
     </h2>
     <h5>
-      <a href="{{ url_for('recipes.edit_recipe', recipe_id=recipe.Recipe.id) }}">Edit</a>
-      |
-      <a href="{{ url_for('recipes.delete_recipe', recipe_id=recipe.Recipe.id) }}">Delete</a>
+      {% if recipe.user_id == current_user.id %}
+        <a href="{{ url_for('recipes.edit_recipe', recipe_id=recipe.id) }}">Edit</a>
+        |
+        <a href="{{ url_for('recipes.delete_recipe', recipe_id=recipe.id) }}">Delete</a>
+      {% endif %}
     </h5>
   </div>
 
@@ -23,23 +25,23 @@
     <div class="col-xs-6 col-md-4">
       <div class="panel panel-primary">
         <div class="panel-heading">Recipe Details</div>
-        <div class="panel-body"><b>Description:</b> {{ recipe.Recipe.recipe_description }}</div>
+        <div class="panel-body"><b>Description:</b> {{ recipe.recipe_description }}</div>
         <div class="panel-body"><b>Public or Private:</b>
-          {% if recipe.Recipe.is_public %}
+          {% if recipe.is_public %}
             Public
           {% else %}
             Private
           {% endif %}
         </div>
-        <div class="panel-body"><b>Recipe Type:</b> {{ recipe.Recipe.recipe_type }}</div>
-        <div class="panel-body"><b>Rating (1-worst to 10-best):</b> {{ recipe.Recipe.rating }}</div>
-        <div class="panel-body"><b>Inspiration:</b> {{ recipe.Recipe.inspiration }}</div>
+        <div class="panel-body"><b>Recipe Type:</b> {{ recipe.recipe_type }}</div>
+        <div class="panel-body"><b>Rating (1-worst to 10-best):</b> {{ recipe.rating }}</div>
+        <div class="panel-body"><b>Inspiration:</b> {{ recipe.inspiration }}</div>
       </div>
    </div>
 
     <div class="col-xs-6 col-md-8">
-      {% if recipe.Recipe.image_url %}
-        <img class="center-block img-responsive" src="{{ recipe.Recipe.image_url }}" alt="{{ recipe.Recipe.image_filename }}" style="width:600px;height:450px;margin-bottom:10px">
+      {% if recipe.image_url %}
+        <img class="center-block img-responsive" src="{{ recipe.image_url }}" alt="{{ recipe.image_filename }}" style="width:600px;height:450px;margin-bottom:10px">
       {% endif %}
     </div>
   </div>
@@ -49,7 +51,7 @@
       <div class="panel panel-primary">
         <div class="panel-heading">Ingredients</div>
         <div class="panel-body">
-          {{ recipe.Recipe.ingredients_html | safe }}
+          {{ recipe.ingredients_html | safe }}
         </div>
       </div>
     </div>
@@ -58,7 +60,7 @@
       <div class="panel panel-primary">
         <div class="panel-heading">Recipe Steps</div>
         <div class="panel-body">
-          {{ recipe.Recipe.recipe_steps_html | safe }}
+          {{ recipe.recipe_steps_html | safe }}
         </div>
       </div>
     </div>
