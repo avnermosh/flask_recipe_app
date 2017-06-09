@@ -89,7 +89,7 @@ def send_new_user_text_message(new_user_email):
         from_=app.config['TWILIO_PHONE_NUMBER']
     )
     # flash('Text message sent to {}: {}'.format(app.config['ADMIN_PHONE_NUMBER'], message.body), 'success')
-    return redirect(url_for('users.user_profile'))
+    return
 
 
 ################

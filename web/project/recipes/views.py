@@ -6,10 +6,11 @@
 
 from flask import render_template, Blueprint, request, redirect, url_for, flash, abort, jsonify
 from flask_login import current_user, login_required
-from project import db, images
+from project import db, images, app
 from project.models import Recipe, User
 from .forms import AddRecipeForm, EditRecipeForm
 from random import random
+from twilio.rest import TwilioRestClient
 
 
 ################
@@ -35,6 +36,17 @@ def flash_errors(form):
 def get_all_recipes_with_users():
     # SQL: SELECT * FROM recipes JOIN users ON recipes.user_id = users.id;
     return db.session.query(Recipe, User).join(User).all()
+
+
+def send_new_recipe_text_message(user_email, recipe_title):
+    client = TwilioRestClient(app.config['ACCOUNT_SID'], app.config['AUTH_TOKEN'])
+    message = client.messages.create(
+        body="Kennedy Family Recipes... {} added a new recipe: {}".format(user_email, recipe_title),  # Message body, if any
+        to=app.config['ADMIN_PHONE_NUMBER'],
+        from_=app.config['TWILIO_PHONE_NUMBER']
+    )
+    # flash('Text message sent to {}: {}'.format(app.config['ADMIN_PHONE_NUMBER'], message.body), 'success')
+    return
 
 
 ################
@@ -93,6 +105,9 @@ def add_recipe():
                                 form.recipe_soy_free.data)
             db.session.add(new_recipe)
             db.session.commit()
+            if 'ACCOUNT_SID' in app.config and not app.config['TESTING']:
+                new_user = User.query.filter_by(id=new_recipe.user_id).first()
+                send_new_recipe_text_message(new_user.email, new_recipe.recipe_title)
             flash('New recipe, {}, added!'.format(new_recipe.recipe_title), 'success')
             return redirect(url_for('recipes.user_recipes', recipe_type='All'))
         else:
