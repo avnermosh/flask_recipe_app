@@ -15,18 +15,18 @@ Keeps track of all your recipes.
 
 1. Create the Dockerfile for the postgres service
 
-    % cd ./flask_recipe_app/web/
-    % python create_postgres_dockerfile.py
-    % cd ..
+- % cd ./flask_recipe_app/web/
+- % python create_postgres_dockerfile.py
+- % cd ..
 
 2. Build and run the Docker containers
 
-    % docker-compose build
-    % docker-compose up -d
+- % docker-compose build
+- % docker-compose up -d
 
 3. Create or re-initialize the database
 
-    % docker-compose run --rm web python ./instance/db_create.py
+- % docker-compose run --rm web python ./instance/db_create.py
 
 Go to your favorite web browser and open:
     http://192.168.99.100:5000  $ Check the IP address using 'docker-machine ip'
