@@ -11,13 +11,25 @@ http://www.kennedyfamilyrecipes.com
 ## What Does This Tool Do?
 Keeps track of all your recipes.
 
-## How to Run
+## How to Run (Development)
 
-In the top-level folder, run the development server:
-    % python run.py
+1. Create the Dockerfile for the postgres service
+
+    % cd ./flask_recipe_app/web/
+    % python create_postgres_dockerfile.py
+    % cd ..
+
+2. Build and run the Docker containers
+
+    % docker-compose build
+    % docker-compose up -d
+
+3. Create or re-initialize the database
+
+    % docker-compose run --rm web python ./instance/db_create.py
 
 Go to your favorite web browser and open:
-    http://locallhost:5000
+    http://192.168.99.100:5000  $ Check the IP address using 'docker-machine ip'
 
 ## Key Python Modules Used
 
@@ -30,7 +42,9 @@ Go to your favorite web browser and open:
 - Flask-WTF - simplifies forms
 - itsdangerous - helps with user management, especially tokens
 
-This application is written using Python 3.4.3.  The database used is PostgreSQL.
+This application is written using Python 3.6.1.  The database used is PostgreSQL.
+
+Docker is the recommended tool for running in development and production.
 
 ## Unit Testing
 
