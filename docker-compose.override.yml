@@ -11,3 +11,7 @@ services:
     volumes:
       - ./web/:/usr/src/app/web
     command: flask run --host=0.0.0.0
+
+  postgres:
+    ports:
+      - "5432:5432"
