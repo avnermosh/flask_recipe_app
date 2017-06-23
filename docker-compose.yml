@@ -7,7 +7,7 @@ services:
     expose:
       - "8000"
     volumes:
-      - /usr/src/app/project/static
+      - /usr/src/app/web/project/static
     command: /usr/local/bin/gunicorn -w 2 -b :8000 project:app
     depends_on:
       - postgres
@@ -35,5 +35,5 @@ services:
     build: ./postgresql
     volumes_from:
       - data
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"

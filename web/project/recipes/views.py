@@ -59,6 +59,11 @@ def public_recipes():
     return render_template('public_recipes.html', public_recipes=all_public_recipes)
 
 
+@recipes_blueprint.route('/abc')
+def public_recipes2():
+    return '<h1>Hello world!</h1>'
+
+
 @recipes_blueprint.route('/recipes/<recipe_type>')
 def user_recipes(recipe_type='All'):
     if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side Dish', 'Drink']:
