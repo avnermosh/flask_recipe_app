@@ -59,11 +59,6 @@ def public_recipes():
     return render_template('public_recipes.html', public_recipes=all_public_recipes)
 
 
-@recipes_blueprint.route('/abc')
-def public_recipes2():
-    return '<h1>Hello world!</h1>'
-
-
 @recipes_blueprint.route('/recipes/<recipe_type>')
 def user_recipes(recipe_type='All'):
     if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side Dish', 'Drink']:
@@ -153,11 +148,26 @@ def delete_recipe(recipe_id):
     return redirect(url_for('recipes.user_recipes', recipe_type='All'))
 
 
+@recipes_blueprint.route('/admin/delete/<recipe_id>')
+@login_required
+def admin_delete_recipe(recipe_id):
+    recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
+
+    if not current_user.role == 'admin':
+        flash('Error! Incorrect permissions to delete this recipe.', 'error')
+        return redirect(url_for('recipes.public_recipes'))
+
+    db.session.delete(recipe)
+    db.session.commit()
+    flash('{} was deleted.'.format(recipe.recipe_title), 'success')
+    return redirect(url_for('recipes.admin_view_recipes', recipe_type='All'))
+
+
 @recipes_blueprint.route('/edit/<recipe_id>', methods=['GET', 'POST'])
 @login_required
 def edit_recipe(recipe_id):
-    # Cannot pass in 'request.form' to AddRecipeForm constructor, as this will cause 'request.files' to not be
-    # sent to the form.  This will cause AddRecipeForm to not see the file data.
+    # Cannot pass in 'request.form' to EditRecipeForm constructor, as this will cause 'request.files' to not be
+    # sent to the form.  This will cause RecipeForm to not see the file data.
     # Flask-WTF handles passing form data to the form, so not parameters need to be included.
     form = EditRecipeForm()
     recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
@@ -242,6 +252,32 @@ def edit_recipe(recipe_id):
     return render_template('edit_recipe.html', form=form, recipe=recipe)
 
 
+@recipes_blueprint.route('/admin/edit/<recipe_id>', methods=['GET', 'POST'])
+@login_required
+def admin_edit_recipe(recipe_id):
+    # Cannot pass in 'request.form' to EditRecipeForm constructor, as this will cause 'request.files' to not be
+    # sent to the form.  This will cause RecipeForm to not see the file data.
+    # Flask-WTF handles passing form data to the form, so not parameters need to be included.
+    form = EditRecipeForm()
+    recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
+
+    if current_user.role != 'admin':
+        abort(403)
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            recipe.import_form_data(request, form)
+            db.session.add(recipe)
+            db.session.commit()
+            flash('Recipe has been updated for {}'.format(recipe.recipe_title), 'success')
+            return redirect(url_for('recipes.admin_view_recipes'))
+        else:
+            flash_errors(form)
+            flash('ERROR! Recipe was not edited.', 'error')
+
+    return render_template('admin_edit_recipe.html', form=form, recipe=recipe)
+
+
 @recipes_blueprint.route('/whats_for_dinner')
 @login_required
 def whats_for_dinner():
@@ -267,3 +303,14 @@ def whats_for_dinner():
                            recipe_found=dinner_recipe_found,
                            takeout_recommendation=dinner_takeout_recommendation,
                            recipe=dinner_recipe)
+
+
+@recipes_blueprint.route('/admin_view_recipes')
+@login_required
+def admin_view_recipes():
+    if current_user.role != 'admin':
+        abort(403)
+    else:
+        recipes = Recipe.query.order_by(Recipe.id).all()
+        return render_template('admin_view_recipes.html', recipes=recipes)
+    return redirect(url_for('users.login'))

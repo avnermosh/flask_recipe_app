@@ -9,7 +9,7 @@
   </div>
 
 <div class="container">
-  <form action="{{ url_for('recipes.edit_recipe', recipe_id=recipe.id) }}" method="post" enctype="multipart/form-data">
+  <form action="{{ url_for('recipes.admin_edit_recipe', recipe_id=recipe.id) }}" method="post" enctype="multipart/form-data">
     {{ form.csrf_token }}
 
     {{ render_recipe_edit_form(form, recipe) }}

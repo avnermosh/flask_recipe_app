@@ -5,6 +5,7 @@ from markdown import markdown
 from flask import url_for
 import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from project.recipes.forms import AddRecipeForm, EditRecipeForm
 
 
 # Allowable HTML tags
@@ -114,6 +115,51 @@ class Recipe(db.Model):
             raise ValidationError('Invalid recipe: missing ' + e.args[0])
         return self
 
+    def import_form_data(self, request, form):
+        """Import the data for this recipe that was input via the EditRecipeForm
+        class.  This can either be done by the user for the recipes that they own
+        or by the administrator.  Additionally, it is assumed that the form has
+        already been validated prior to being passed in here."""
+        try:
+            if form.recipe_title.data != self.recipe_title:
+                self.recipe_title = form.recipe_title.data
+
+            if form.recipe_description.data != self.recipe_description:
+                self.recipe_description = form.recipe_description.data
+
+            if form.recipe_public.data != self.is_public:
+                self.is_public = form.recipe_public.data
+
+            if form.recipe_dairy_free.data != self.dairy_free_recipe:
+                self.dairy_free_recipe = form.recipe_dairy_free.data
+
+            if form.recipe_soy_free.data != self.soy_free_recipe:
+                self.soy_free_recipe = form.recipe_soy_free.data
+
+            if form.recipe_type.data != self.recipe_type:
+                self.recipe_type = form.recipe_type.data
+
+            if form.recipe_rating.data != str(self.rating):
+                self.rating = form.recipe_rating.data
+
+            if form.recipe_image.has_file():
+                filename = images.save(request.files['recipe_image'])
+                self.image_filename = filename
+                self.image_url = images.url(filename)
+
+            if form.recipe_ingredients.data != self.ingredients:
+                self.ingredients = form.recipe_ingredients.data
+
+            if form.recipe_steps.data != self.recipe_steps:
+                self.recipe_steps = form.recipe_steps.data
+
+            if form.recipe_inspiration.data != self.inspiration:
+                self.inspiration = form.recipe_inspiration.data
+
+        except KeyError as e:
+            raise ValidationError('Invalid recipe: missing ' + e.args[0])
+        return self
+
     @staticmethod
     def on_changed_ingredients(target, value, oldvalue, iterator):
         if value:
@@ -158,6 +204,32 @@ class User(db.Model):
         self.last_logged_in = None
         self.current_logged_in = datetime.now()
         self.role = role
+
+    def import_form_data(self, form):
+        """Import the data for this recipe that was input via the EditUserForm
+        class.  This can only be done by the administrator.  Additionally, it
+        is assumed that the form has already been validated prior to being
+        passed in here."""
+        try:
+            if form.email.data != self.email:
+                self.email = form.email.data
+
+            if form.user_role.data != self.role:
+                self.role = form.user_role.data
+
+            if form.email_confirmed.data and not self.email_confirmed:
+                self.email_confirmed = True
+                self.email_confirmed_on = datetime.now()
+            elif not form.email_confirmed.data and self.email_confirmed:
+                self.email_confirmed = False
+                self.email_confirmed_on = None
+
+            if form.new_password.data:
+                self.password = form.new_password.data
+
+        except KeyError as e:
+            raise ValidationError('Invalid user: missing ' + e.args[0])
+        return self
 
     @hybrid_property
     def password(self):

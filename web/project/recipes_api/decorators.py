@@ -1,4 +1,4 @@
-# project/recipes_api/views.py
+# project/recipes_api/decorators.py
 
 #################
 #### imports ####

@@ -14,7 +14,7 @@ from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime
 from twilio.rest import TwilioRestClient
 
-from .forms import RegisterForm, LoginForm, EmailForm, PasswordForm
+from .forms import RegisterForm, LoginForm, EmailForm, PasswordForm, EditUserForm
 from project import db, mail, app
 from project.models import User
 
@@ -147,7 +147,7 @@ def logout():
     db.session.commit()
     logout_user()
     flash('Goodbye!', 'info')
-    return redirect(url_for('users.login'))
+    return redirect(url_for('recipes.public_recipes'))
 
 
 @users_blueprint.route('/confirm/<token>')
@@ -285,7 +285,38 @@ def resend_email_confirmation():
 def admin_view_users():
     if current_user.role != 'admin':
         abort(403)
-    else:
-        users = User.query.order_by(User.id).all()
-        return render_template('admin_view_users.html', users=users)
-    return redirect(url_for('users.login'))
+
+    users = User.query.order_by(User.id).all()
+    return render_template('admin_view_users.html', users=users)
+
+
+@users_blueprint.route('/admin/delete/user/<user_id>')
+@login_required
+def admin_delete_user(user_id):
+    if current_user.role != 'admin':
+        abort(403)
+
+    user = User.query.filter_by(id=user_id).first_or_404()
+    db.session.delete(user)
+    db.session.commit()
+    flash('User #{} was deleted.'.format(user_id), 'success')
+    return redirect(url_for('users.admin_view_users'))
+
+
+@users_blueprint.route('/admin/edit/user/<user_id>', methods=["GET", "POST"])
+@login_required
+def admin_edit_user(user_id):
+    if current_user.role != 'admin':
+        abort(403)
+
+    form = EditUserForm()
+    user = User.query.filter_by(id=user_id).first_or_404()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user.import_form_data(form)
+            db.session.add(user)
+            db.session.commit()
+            flash('User #{} was updated to email address: {}'.format(user.id, user.email), 'success')
+            return redirect(url_for('users.admin_view_users'))
+    return render_template('admin_edit_user.html', form=form, user=user)
