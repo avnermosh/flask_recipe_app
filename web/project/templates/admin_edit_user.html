@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% from "_form_macros.html" import render_errors, render_field %}
+
+{% block content %}
+
+<div class="edit-recipe">
+  <div class="page-header">
+    <h2>Edit User</h2>
+  </div>
+
+<div class="container">
+  <form action="{{ url_for('users.admin_edit_user', user_id=user.id) }}" method="post" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+
+    <div class="form-group row">
+      <legend for="email" class="col-form-legend col-sm-2">Email</legend>
+      <div class="col-sm-6">
+        <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}">
+        {{ render_errors(form.email) }}
+      </div>
+    </div>
+
+    <fieldset class="form-group row">
+      <legend for="user_role" class="col-form-legend col-sm-2">User Role</legend>
+      <div class="col-sm-6">
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if user.role == "user" %}
+                <input type="radio" class="form-check-input" name="user_role" id="user_role-0" value="user" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="user_role" id="user_role-0" value="user">
+              {% endif %}
+              User
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              {% if user.role == "admin" %}
+                <input type="radio" class="form-check-input" name="user_role" id="user_role-1" value="admin" checked>
+              {% else %}
+                <input type="radio" class="form-check-input" name="user_role" id="user_role-1" value="admin">
+              {% endif %}
+              Administrator
+            </label>
+          </div>
+      </div>
+    </fieldset>
+
+    <div class="form-group row">
+      <legend for="new_password" class="col-form-legend col-sm-2">New Password</legend>
+      <div class="col-sm-6">
+        <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Leave blank to not change password">
+        {{ render_errors(form.new_password) }}
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <legend for="new_confirm" class="col-form-legend col-sm-2">Confirm Password</legend>
+      <div class="col-sm-6">
+        <input type="password" class="form-control" id="new_confirm" name="new_confirm" placeholder="Leave blank to not change password">
+        {{ render_errors(form.new_confirm) }}
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <legend for="email_confirmed" class="col-form-legend col-sm-2">Email Confirmed?</legend>
+      <div class="col-sm-6">
+        <div class="form-check">
+          <label class="form-check-label">
+            {% if user.email_confirmed == true %}
+              <input class="form-check-input" name="email_confirmed" id="email_confirmed" type="checkbox" checked>
+            {% else %}
+              <input class="form-check-input" name="email_confirmed" id="email_confirmed" type="checkbox">
+            {% endif %}
+            Yes
+          </label>
+          {{ render_errors(form.email_confirmed) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="offset-sm-2 col-sm-10">
+        <button type="submit" class="btn btn-success">Edit User</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+</div>
+
+{% endblock %}

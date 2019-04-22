@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="admin-view-users">
+  <div class="page-header">
+    <h2>Administrative Page: List of Recipes</h2>
+  </div>
+
+  <div class="row">
+    <table class="table table-striped" id="admin_list_of_recipes">
+      <thead>
+        <tr>
+          <th>Recipe ID</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Public?</th>
+          <th>Dairy Free?</th>
+          <th>Soy Free?</th>
+          <th>Rating</th>
+          <th>Image Filename</th>
+          <th>Actions</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for recipe in recipes %}
+          <tr>
+            <td> {{ recipe.id }} </td>
+            <td> {{ recipe.recipe_title }} </td>
+            <td> {{ recipe.recipe_description }} </td>
+            <td> {{ recipe.is_public }} </td>
+            <td> {{ recipe.dairy_free_recipe }} </td>
+            <td> {{ recipe.soy_free_recipe }} </td>
+            <td> {{ recipe.rating }} </td>
+            <td> {{ recipe.image_filename }} </td>
+            <td>
+              <a href="{{ url_for('recipes.admin_delete_recipe', recipe_id = recipe.id) }}">Delete</a>
+              <a href="{{ url_for('recipes.admin_edit_recipe', recipe_id = recipe.id) }}">Edit</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

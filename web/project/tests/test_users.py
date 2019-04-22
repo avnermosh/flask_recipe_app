@@ -213,7 +213,7 @@ class UsersTests(unittest.TestCase):
         self.app.get('/login', follow_redirects=True)
         response = self.login('admin@kennedyfamilyrecipes.com', 'AdMiNpAsSwOrD')
         self.assertIn(b'admin@kennedyfamilyrecipes.com', response.data)
-        self.assertIn(b'View Users (Admin)', response.data)
+        self.assertIn(b'Admin', response.data)
         response = self.app.get('/admin_view_users')
         self.assertIn(b'Administrative Page: List of Users', response.data)
 
