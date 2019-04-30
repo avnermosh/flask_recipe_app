@@ -114,7 +114,6 @@ def add_recipe():
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['IMAGE_FOLDER'], filename))
-                # file.save(os.path.join('/home/flask/app/web/instance/images', file.filename))
                 url = os.path.join(app.config['IMAGE_URL'], filename)
             else:
                 filename = ''
@@ -138,8 +137,7 @@ def add_recipe():
             if 'ACCOUNT_SID' in app.config and not app.config['TESTING'] and not app.config['DEBUG']:
                 new_user = User.query.filter_by(id=new_recipe.user_id).first()
                 send_new_recipe_text_message(new_user.email, new_recipe.recipe_title)
-            flash('New recipe, {}, added! Path: {}'.format(new_recipe.recipe_title, os.path.join(app.config['IMAGE_FOLDER'])), 'success')
-            flash('New recipe, filename: {}, url: {}, added!'.format(filename, url), 'success')
+            flash('New recipe, {}, added!'.format(new_recipe.recipe_title), 'success')
             return redirect(url_for('recipes.user_recipes', recipe_type='All'))
         else:
             flash_errors(form)
