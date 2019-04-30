@@ -6,7 +6,6 @@ from wtforms import StringField, BooleanField, RadioField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_pagedown.fields import PageDownField
-from project import images
 
 
 class AddRecipeForm(Form):
@@ -35,7 +34,7 @@ class AddRecipeForm(Form):
                                         ('9', 'Rating 9'),
                                         ('10', 'Rating 10')],
                                default='5')
-    recipe_image = FileField('Recipe Image', validators=[FileRequired(), FileAllowed(images, 'Images only!')])
+    recipe_image = FileField('Recipe Image', validators=[FileRequired()])
     recipe_ingredients = PageDownField('Recipe Ingredients', validators=[DataRequired()], render_kw={"rows": 12, "cols": 100})
     recipe_steps = PageDownField('Recipe Steps', validators=[DataRequired()], render_kw={"rows": 12, "cols": 100})
     recipe_inspiration = StringField('Recipe Inspiration', validators=[DataRequired()])
@@ -67,7 +66,7 @@ class EditRecipeForm(Form):
                                         ('9', 'Rating 9'),
                                         ('10', 'Rating 10')],
                                default='5')
-    recipe_image = FileField('Recipe Image', validators=[FileAllowed(images, 'Images only!')])
+    recipe_image = FileField('Recipe Image')
     recipe_ingredients = PageDownField('Recipe Ingredients', validators=[], render_kw={"rows": 12, "cols": 100})
     recipe_steps = PageDownField('Recipe Steps', validators=[], render_kw={"rows": 12, "cols": 100})
     recipe_inspiration = StringField('Recipe Inspiration', validators=[DataRequired()])
