@@ -7,7 +7,7 @@ services:
     expose:
       - "8000"
     volumes:
-      - /usr/src/app/web/project/static
+      - /home/flask/app/web
     command: /usr/local/bin/gunicorn -w 2 -b :8000 project:app
     depends_on:
       - postgres

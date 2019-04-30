@@ -1,4 +1,4 @@
-from project import db, bcrypt, app, images
+from project import db, bcrypt, app
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from datetime import datetime
 from markdown import markdown
@@ -6,6 +6,8 @@ from flask import url_for
 import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from project.recipes.forms import AddRecipeForm, EditRecipeForm
+from werkzeug.utils import secure_filename
+import os
 
 
 # Allowable HTML tags
@@ -94,9 +96,12 @@ class Recipe(db.Model):
         must always be specified."""
         try:
             if 'recipe_image' in request.files:
-                filename = images.save(request.files['recipe_image'])
+                file = request.files['recipe_image']
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['IMAGE_FOLDER'], filename))
+                url = os.path.join(app.config['IMAGE_URL'], filename)
                 self.image_filename = filename
-                self.image_url = images.url(filename)
+                self.image_url = url
             else:
                 json_data = request.get_json()
                 self.recipe_title = json_data['title']
@@ -143,9 +148,12 @@ class Recipe(db.Model):
                 self.rating = form.recipe_rating.data
 
             if form.recipe_image.has_file():
-                filename = images.save(request.files['recipe_image'])
+                file = request.files['recipe_image']
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['IMAGE_FOLDER'], filename))
+                url = os.path.join(app.config['IMAGE_URL'], filename)
                 self.image_filename = filename
-                self.image_url = images.url(filename)
+                self.image_url = url
 
             if form.recipe_ingredients.data != self.ingredients:
                 self.ingredients = form.recipe_ingredients.data

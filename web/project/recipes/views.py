@@ -6,11 +6,13 @@
 
 from flask import render_template, Blueprint, request, redirect, url_for, flash, abort, jsonify
 from flask_login import current_user, login_required
-from project import db, images, app
+from project import db, app
 from project.models import Recipe, User
 from .forms import AddRecipeForm, EditRecipeForm
 from random import random
 from twilio.rest import TwilioRestClient
+from werkzeug.utils import secure_filename
+import os
 
 
 ################
@@ -18,6 +20,8 @@ from twilio.rest import TwilioRestClient
 ################
 
 recipes_blueprint = Blueprint('recipes', __name__)
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 ##########################
@@ -47,6 +51,10 @@ def send_new_recipe_text_message(user_email, recipe_title):
     )
     # flash('Text message sent to {}: {}'.format(app.config['ADMIN_PHONE_NUMBER'], message.body), 'success')
     return
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 ################
@@ -88,8 +96,29 @@ def add_recipe():
     form = AddRecipeForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            filename = images.save(request.files['recipe_image'])
-            url = images.url(filename)
+            # check if the post request has the recipe_image part
+            if 'recipe_image' not in request.files:
+                flash('No recipe image provided!')
+                return redirect(request.url)
+
+            file = request.files['recipe_image']
+
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+
+            if not file:
+                flash('File is empty!')
+                return redirect(request.url)
+
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['IMAGE_FOLDER'], filename))
+                url = os.path.join(app.config['IMAGE_URL'], filename)
+            else:
+                filename = ''
+                url = ''
+
             new_recipe = Recipe(form.recipe_title.data,
                                 form.recipe_description.data,
                                 current_user.id,
@@ -105,7 +134,7 @@ def add_recipe():
                                 form.recipe_soy_free.data)
             db.session.add(new_recipe)
             db.session.commit()
-            if 'ACCOUNT_SID' in app.config and not app.config['TESTING']:
+            if 'ACCOUNT_SID' in app.config and not app.config['TESTING'] and not app.config['DEBUG']:
                 new_user = User.query.filter_by(id=new_recipe.user_id).first()
                 send_new_recipe_text_message(new_user.email, new_recipe.recipe_title)
             flash('New recipe, {}, added!'.format(new_recipe.recipe_title), 'success')
@@ -218,9 +247,12 @@ def edit_recipe(recipe_id):
             if form.recipe_image.has_file():
                 flash('DEBUG: Updating recipe.image_filename to {}.'.format(form.recipe_image.data), 'debug')
                 update_counter += 1
-                filename = images.save(request.files['recipe_image'])
+                file = request.files['recipe_image']
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['IMAGE_FOLDER'], filename))
+                url = os.path.join(app.config['IMAGE_URL'], filename)
                 recipe.image_filename = filename
-                recipe.image_url = images.url(filename)
+                recipe.image_url = url
 
             if form.recipe_ingredients.data != recipe.ingredients:
                 flash('DEBUG: Updating recipe.ingredients to {}.'.format(form.recipe_ingredients.data), 'debug')
