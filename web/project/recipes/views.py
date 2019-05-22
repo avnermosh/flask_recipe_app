@@ -64,11 +64,13 @@ def allowed_file(filename):
 @recipes_blueprint.route('/')
 def public_recipes():
     all_public_recipes = Recipe.query.filter(Recipe.is_public == True, Recipe.image_url != None).order_by(Recipe.rating.desc()).limit(4)
+    # import pdb; pdb.set_trace()
     return render_template('public_recipes.html', public_recipes=all_public_recipes)
 
 
 @recipes_blueprint.route('/recipes/<recipe_type>')
 def user_recipes(recipe_type='All'):
+    print( 'BEG user_recipes' )
     if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side Dish', 'Drink']:
         if current_user.is_authenticated:
             my_recipes = Recipe.query.filter(((Recipe.user_id == current_user.id) & (Recipe.recipe_type == recipe_type)) | ((Recipe.is_public == True) & (Recipe.recipe_type == recipe_type)))
@@ -90,6 +92,7 @@ def user_recipes(recipe_type='All'):
 @recipes_blueprint.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_recipe():
+    print( 'BEG add_recipe', flush=True )
     # Cannot pass in 'request.form' to AddRecipeForm constructor, as this will cause 'request.files' to not be
     # sent to the form.  This will cause AddRecipeForm to not see the file data.
     # Flask-WTF handles passing form data to the form, so not parameters need to be included.

@@ -66,6 +66,7 @@ class Recipe(db.Model):
         self.user_id = user_id
 
     def __repr__(self):
+        print( 'BEG __repr__', flush=True )
         return '<id: {}, title: {}, user_id: {}>'.format(self.id, self.recipe_title, self.user_id)
 
     def get_url(self):
@@ -203,7 +204,7 @@ class User(db.Model):
 
     def __init__(self, email, plaintext_password, email_confirmation_sent_on=None, role='user'):
         self.email = email
-        self.password = plaintext_password
+        self._password = bcrypt.generate_password_hash(bytes(plaintext_password, 'utf-8'))
         self.authenticated = False
         self.email_confirmation_sent_on = email_confirmation_sent_on
         self.email_confirmed = False
@@ -233,7 +234,7 @@ class User(db.Model):
                 self.email_confirmed_on = None
 
             if form.new_password.data:
-                self.password = form.new_password.data
+                self._password = form.new_password.data
 
         except KeyError as e:
             raise ValidationError('Invalid user: missing ' + e.args[0])
@@ -245,11 +246,11 @@ class User(db.Model):
 
     @password.setter
     def set_password(self, plaintext_password):
-        self._password = bcrypt.generate_password_hash(plaintext_password)
+        self.password = bcrypt.generate_password_hash(bytes(plaintext_password, 'utf-8'))
 
     @hybrid_method
     def is_correct_password(self, plaintext_password):
-        return bcrypt.check_password_hash(self.password, plaintext_password)
+        return bcrypt.check_password_hash(self._password, bytes(plaintext_password, 'utf-8'))
 
     @property
     def is_authenticated(self):

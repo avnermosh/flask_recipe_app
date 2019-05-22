@@ -23,7 +23,7 @@ db.drop_all()
 db.create_all()
 
 # Insert user data
-user1 = User(email='patkennedy79@yahoo.com', plaintext_password='password1234', role='user')
+user1 = User(email='patkennedy79@yahoo.com', plaintext_password='password1234', role='admin')
 user2 = User(email='kennedyfamilyrecipes@gmail.com', plaintext_password='PaSsWoRd', role='user')
 user3 = User(email='blaa@blaa.com', plaintext_password='MyFavPassword', role='user')
 db.session.add(user1)

@@ -8,9 +8,11 @@ services:
       - "8000"
     volumes:
       - /home/flask/app/web
-    command: /usr/local/bin/gunicorn -w 2 -b :8000 project:app
+    command: /usr/local/bin/gunicorn -w 2 -t 3600 -b :8000 project:app
     depends_on:
       - postgres
+    stdin_open: true
+    tty: true
 
   nginx:
     restart: always

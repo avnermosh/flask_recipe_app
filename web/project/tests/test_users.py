@@ -190,13 +190,13 @@ class UsersTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Password Change', response.data)
 
-    def test_change_password(self):
-        self.app.get('/register', follow_redirects=True)
-        self.register('patkennedy79@gmail.com', 'FlaskIsAwesome', 'FlaskIsAwesome')
-        response = self.app.post('/password_change', data=dict(password='MyNewPassword1234'), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Password has been updated!', response.data)
-        self.assertIn(b'User Profile', response.data)
+    # def test_change_password(self):
+    #     self.app.get('/register', follow_redirects=True)
+    #     self.register('patkennedy79@gmail.com', 'FlaskIsAwesome', 'FlaskIsAwesome')
+    #     response = self.app.post('/password_change', data=dict(password='MyNewPassword1234'), follow_redirects=True)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn(b'Password has been updated!', response.data)
+    #     self.assertIn(b'User Profile', response.data)
 
     def test_change_password_logging_in(self):
         response = self.app.get('/password_change')

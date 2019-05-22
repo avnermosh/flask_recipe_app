@@ -4,7 +4,7 @@
 #### imports ####
 #################
 
-from flask import render_template, Blueprint, request, redirect, url_for, abort, jsonify, g
+from flask import render_template, Blueprint, request, redirect, url_for, abort, jsonify, g, make_response
 from project import db, auth, auth_token, app
 from project.models import Recipe, User
 from .decorators import no_cache, etag
@@ -100,11 +100,13 @@ def after_request(rv):
 @auth.login_required
 @no_cache
 def get_auth_token():
-    return jsonify({'token': g.user.generate_auth_token()})
+    print( 'BEG get_auth_token' )
+    return make_response(jsonify({'token': g.user.generate_auth_token()}), 200)
 
 
 @recipes_api_blueprint.route('/api/v1_2/recipes', methods=['GET'])
 def api1_2_get_all_recipes():
+    print( 'BEG api1_2_get_all_recipes' )
     return jsonify({'recipes': [recipe.get_url() for recipe in Recipe.query.all()]})
 
 
