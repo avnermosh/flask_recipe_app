@@ -13,7 +13,7 @@ if not os.path.isdir(destination_dir):
 
 # Create the 'Dockerfile' for initializing the Postgres Docker image
 with open(os.path.join(destination_dir, docker_file), 'w') as postgres_dockerfile:
-    postgres_dockerfile.write('FROM postgres:9.6')
+    postgres_dockerfile.write('FROM postgres:11.3')
     postgres_dockerfile.write('\n')
     postgres_dockerfile.write('\n# Set environment variables')
     postgres_dockerfile.write('\nENV POSTGRES_USER {}'.format(app.config['POSTGRES_USER']))

@@ -13,6 +13,7 @@ from random import random
 from twilio.rest import TwilioRestClient
 from werkzeug.utils import secure_filename
 import os
+import json
 
 
 ################
@@ -61,11 +62,30 @@ def allowed_file(filename):
 #### routes ####
 ################
 
+
+# this renders the main html page for localhost, localhost/
 @recipes_blueprint.route('/')
 def public_recipes():
-    all_public_recipes = Recipe.query.filter(Recipe.is_public == True, Recipe.image_url != None).order_by(Recipe.rating.desc()).limit(4)
+
+    all_public_recipes = Recipe.query.filter(Recipe.is_public, Recipe.image_url != None).order_by(Recipe.rating.desc()).limit(4)
+
     # import pdb; pdb.set_trace()
-    return render_template('public_recipes.html', public_recipes=all_public_recipes)
+    print( 'all_public_recipes', all_public_recipes )
+    print( 'foo1' )
+ 
+
+    # tbd - replace "site_list"    with "all_dinner_of_user1_recipes" -> query of dinner recipes forthe user from the db
+
+    site_list = {'a': {'target': 'http://testing.com/test', 'name': 'jinja2 testing'},
+                '1': {'target': '4013 W21', 'name': '4013 W21_111'},
+                '2': {'target': '942_w22_chem', 'name': '942_w22_chem'}}
+
+    plan_list = {'a': {'target': 'floor0', 'name': 'floor0'},
+                '1': {'target': 'floor1', 'name': 'floor1'},
+                '2': {'target': 'floor2', 'name': 'floor2'}}
+    
+    # return render_template('public_recipes.html', public_recipes=all_public_recipes)
+    return render_template('public_recipes.html', public_recipes=all_public_recipes, site_list=site_list, plan_list=plan_list)
 
 
 @recipes_blueprint.route('/recipes/<recipe_type>')
@@ -73,15 +93,17 @@ def user_recipes(recipe_type='All'):
     print( 'BEG user_recipes' )
     if recipe_type in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Side Dish', 'Drink']:
         if current_user.is_authenticated:
-            my_recipes = Recipe.query.filter(((Recipe.user_id == current_user.id) & (Recipe.recipe_type == recipe_type)) | ((Recipe.is_public == True) & (Recipe.recipe_type == recipe_type)))
+            my_recipes = Recipe.query.filter(((Recipe.user_id == current_user.id) & (Recipe.recipe_type == recipe_type)) | ((Recipe.is_public) & (Recipe.recipe_type == recipe_type)))
         else:
-            my_recipes = Recipe.query.filter((Recipe.is_public == True) & (Recipe.recipe_type == recipe_type))
+            my_recipes = Recipe.query.filter((Recipe.is_public) & (Recipe.recipe_type == recipe_type))
+
+        print( 'my_recipes', my_recipes )
         return render_template('user_recipes.html', user_recipes=my_recipes, recipe_type=recipe_type)
     elif recipe_type == 'All':
         if current_user.is_authenticated:
-            my_recipes = Recipe.query.filter((Recipe.user_id == current_user.id) | (Recipe.is_public == True))
+            my_recipes = Recipe.query.filter((Recipe.user_id == current_user.id) | (Recipe.is_public))
         else:
-            my_recipes = Recipe.query.filter(Recipe.is_public == True)
+            my_recipes = Recipe.query.filter(Recipe.is_public)
         return render_template('user_recipes.html', user_recipes=my_recipes, recipe_type=recipe_type)
     else:
         flash('ERROR! Invalid recipe type selected.', 'error')
@@ -90,7 +112,7 @@ def user_recipes(recipe_type='All'):
 
 
 @recipes_blueprint.route('/add', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def add_recipe():
     print( 'BEG add_recipe', flush=True )
     # Cannot pass in 'request.form' to AddRecipeForm constructor, as this will cause 'request.files' to not be
@@ -166,7 +188,7 @@ def recipe_details(recipe_id):
 
 
 @recipes_blueprint.route('/delete/<recipe_id>')
-@login_required
+# @login_required
 def delete_recipe(recipe_id):
     recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
 
@@ -181,7 +203,7 @@ def delete_recipe(recipe_id):
 
 
 @recipes_blueprint.route('/admin/delete/<recipe_id>')
-@login_required
+# @login_required
 def admin_delete_recipe(recipe_id):
     recipe = Recipe.query.filter_by(id=recipe_id).first_or_404()
 
@@ -196,7 +218,7 @@ def admin_delete_recipe(recipe_id):
 
 
 @recipes_blueprint.route('/edit/<recipe_id>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def edit_recipe(recipe_id):
     # Cannot pass in 'request.form' to EditRecipeForm constructor, as this will cause 'request.files' to not be
     # sent to the form.  This will cause RecipeForm to not see the file data.
@@ -288,7 +310,7 @@ def edit_recipe(recipe_id):
 
 
 @recipes_blueprint.route('/admin/edit/<recipe_id>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def admin_edit_recipe(recipe_id):
     # Cannot pass in 'request.form' to EditRecipeForm constructor, as this will cause 'request.files' to not be
     # sent to the form.  This will cause RecipeForm to not see the file data.
@@ -314,7 +336,7 @@ def admin_edit_recipe(recipe_id):
 
 
 @recipes_blueprint.route('/whats_for_dinner')
-@login_required
+# @login_required
 def whats_for_dinner():
     dinner_recipe_found = True
     dinner_takeout_recommendation = False
@@ -341,7 +363,7 @@ def whats_for_dinner():
 
 
 @recipes_blueprint.route('/admin_view_recipes')
-@login_required
+# @login_required
 def admin_view_recipes():
     if current_user.role != 'admin':
         abort(403)

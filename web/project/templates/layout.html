@@ -45,7 +45,17 @@
                 <li><a href="{{ url_for('recipes.user_recipes', recipe_type='All') }}">All Recipes</a></li>
               </ul>
             </li>
+
+
             {% if current_user.is_authenticated %}
+                    
+            <!-- if user has dinner recipe - add "Dinner" dropdown, with different dinner options -->
+            <!-- tbd -->
+            <!-- {% if current_user.api1_2_get_dinner_recipes %}
+                 <li><a Dinner Options</a></li>
+                 {% endif %} -->
+            <li><a href="{{ url_for('recipes.whats_for_dinner') }}">What's for Dinner11?</a></li>
+            
               <li><a href="{{ url_for('recipes.add_recipe') }}">Add Recipe</a></li>
               <li><a href="{{ url_for('recipes.whats_for_dinner') }}">What's for Dinner?</a></li>
               <li><a href="{{ url_for('users.logout') }}">Log Out</a></li>

@@ -83,7 +83,7 @@ def unauthorized_token():
 ################
 
 @recipes_api_blueprint.before_request
-@auth_token.login_required
+# @auth_token.login_required
 def before_request():
     """All routes in this blueprint require authentication."""
     pass
@@ -97,12 +97,37 @@ def after_request(rv):
 
 
 @app.route('/get-auth-token')
-@auth.login_required
+# @auth.login_required
 @no_cache
 def get_auth_token():
     print( 'BEG get_auth_token' )
     return make_response(jsonify({'token': g.user.generate_auth_token()}), 200)
 
+
+@recipes_api_blueprint.route('/api/v1_2/get_dinner_recipes', methods=['GET'])
+def api1_2_get_dinner_recipes():
+    print( 'BEG api1_2_get_dinner_recipes' )
+
+    # join tables
+    result = (db.session.query(Recipe,User)
+              .filter(Recipe.user_id == User.id)
+              .filter(Recipe.recipe_type=='Dinner')
+              .filter(User.id==2)
+              .order_by(Recipe.id.asc()).first())
+
+    if result != None:
+        dinnerRecipe = result[0]
+    else:
+        dinnerRecipe = None
+
+    
+    # dinnerRecipe = Recipe.query.filter_by(recipe_type='Dinner').order_by(Recipe.id.asc()).first()
+    print( 'dinnerRecipe', dinnerRecipe )
+    
+    if dinnerRecipe != None:
+        return jsonify({'dinner_recipe_url': dinnerRecipe.get_url()})
+    else:
+        return jsonify({})
 
 @recipes_api_blueprint.route('/api/v1_2/recipes', methods=['GET'])
 def api1_2_get_all_recipes():

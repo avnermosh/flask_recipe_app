@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   web:
@@ -10,9 +10,17 @@ services:
       - FLASK_APP=run.py
       - FLASK_DEBUG=1
     volumes:
-      - ./web/:/usr/src/app/web
+      - /home/avner/avner/softwarelib/flask_recipe_app-master/web:/usr/src/app/web
+      - /home/avner/avner/softwarelib/flask_recipe_app-master/web/V1/:/usr/src/app/web/V1
     command: flask run --host=0.0.0.0 --port 8000
 
+  nginx:
+    volumes:
+      - /home/avner/avner/softwarelib/flask_recipe_app-master/web:/usr/src/app/web
+      - /home/avner/avner/softwarelib/flask_recipe_app-master/web/V1/:/usr/src/app/web/V1
+    depends_on:
+      - web
+    
   postgres:
     ports:
       - "5432:5432"
