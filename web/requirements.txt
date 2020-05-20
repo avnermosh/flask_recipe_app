@@ -23,7 +23,7 @@ Flask-WTF==0.12
 freeze==1.0.10
 gunicorn==19.6.0
 html5lib==0.9999999
-httplib2==0.10.3
+httplib2==0.18.0
 itsdangerous==0.24
 Jinja2==2.10.1
 Mako==1.0.4
