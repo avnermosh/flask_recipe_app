@@ -26,7 +26,7 @@ html5lib==0.9999999
 httplib2==0.10.3
 itsdangerous==0.24
 Jinja2==2.10.1
-Mako==1.0.4
+Mako==1.2.2
 Markdown==2.6.7
 MarkupSafe==0.23
 more-itertools==7.0.0
